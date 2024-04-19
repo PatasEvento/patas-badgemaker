@@ -23,13 +23,17 @@ def load_inputfile():
 def loadImagesFromColumn(col, submenu):
     global data, images
     images = {}
-    for index, row in data.iterrows():
-        if pd.notna(row[col]):
-            print(row[col])
-            if re.match(url_regex, row[col]):
-                im = Image.open(requests.get(row[col], stream=True).raw)
-            else:
-                im = Image.open(f'local_images/{row[col]}')
-            images[index] = im
-    submenu.set_title(f"{images}\n\nImages loaded from column '{col}' successfully!")
-    submenu.set_options([('Back', submenu.close)])
+    try:
+        for index, row in data.iterrows():
+            if pd.notna(row[col]):
+                print(row[col])
+                if re.match(url_regex, row[col]):
+                    im = Image.open(requests.get(row[col], stream=True).raw)
+                else:
+                    im = Image.open(f'local_images/{row[col]}')
+                images[index] = im
+        submenu.set_title(f"{images}\n\nImages loaded from column '{col}' successfully!")
+        submenu.set_options([('Back', submenu.close)])
+    except Exception as e:
+        submenu.set_title(f"Error loading images: {e}")
+        submenu.set_options([('Back', submenu.close)])

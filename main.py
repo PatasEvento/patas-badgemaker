@@ -21,7 +21,7 @@ def loadImages():
     submenu = menu.Menu(title="Select a column to load images from:")
     options = []
     for column in loader.data.columns:
-        options.append((column, options.append((column, lambda col=column: loader.loadImagesFromColumn(col, submenu)))))
+        options.append((column, lambda col=column: loader.loadImagesFromColumn(col, submenu)))
     submenu.set_options(options)
     submenu.open()
 
