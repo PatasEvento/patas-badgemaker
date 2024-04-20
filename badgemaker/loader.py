@@ -1,4 +1,3 @@
-import menu
 import pandas as pd
 from PIL import Image
 import requests

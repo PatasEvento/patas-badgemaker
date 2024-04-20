@@ -2,6 +2,7 @@ import menu
 import sys
 sys.path.insert(0, 'badgemaker')
 import loader
+import template
 
 def notifyNoData():
     submenu = menu.Menu(title="No Data File Loaded!")

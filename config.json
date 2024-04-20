@@ -1,0 +1,25 @@
+{
+    "rules": [
+      {
+        "condition": "isStaff == 1",
+        "template": "staff.png"
+      },
+      {
+        "condition": "(isMinor == 0) and (ticketTierId in [4, 5, 7, 8, 11])",
+        "template": "major_bronzesilver.png"
+      },
+      {
+        "condition": "(isMinor == 1) and (ticketTierId in [4, 5, 7, 8, 11])",
+        "template": "minor_bronzesilver.png"
+      },
+      {
+        "condition": "(isMinor == 0) and (ticketTierId not in [4, 5, 7, 8, 11])",
+        "template": "major_gold.png"
+      },
+      {
+        "condition": "(isMinor == 1) and (ticketTierId not in [4, 5, 7, 8, 11])",
+        "template": "minor_gold.png"
+      }
+    ]
+  }
+  
