@@ -7,6 +7,9 @@ import re
 url_regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
 data = {}
 images = {}
+text_column = ''
+template_column = ''
+font_name = ''
 
 def load_inputfile():
     tkinter.Tk().withdraw()
@@ -36,3 +39,21 @@ def loadImagesFromColumn(col, submenu):
     except Exception as e:
         submenu.set_title(f"Error loading images: {e}")
         submenu.set_options([('Back', submenu.close)])
+
+def set_text_column(col, submenu):
+    global text_column
+    text_column = col
+    submenu.set_title(f"Text column set to '{col}'")
+    submenu.set_options([('Back', submenu.close)])
+
+def set_template_column(col, submenu):
+    global template_column
+    template_column = col
+    submenu.set_title(f"Template column set to '{col}'")
+    submenu.set_options([('Back', submenu.close)])
+
+def set_font_name(name, submenu):
+    global font_name
+    font_name = name
+    submenu.set_title(f"Font set to '{name}'")
+    submenu.set_options([('Back', submenu.close)])
