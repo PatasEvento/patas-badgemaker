@@ -41,4 +41,4 @@ def generate_badge(data, photos, text_column, template_column, font_name):
             template = cv2.imread(f'templates/{row[template_column].strip().lower()}.jpg')
         template = insert_photo(template, photos[index])
         template = insert_text(template, row[text_column], f'fonts/{font_name}.ttf')
-        cv2.imwrite(f'badges/{index}.png', template)
+        cv2.imwrite(f'output/{index}.png', template)
