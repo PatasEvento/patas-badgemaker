@@ -17,17 +17,28 @@ def insert_text(template, text, font_path):
     mask_red = cv2.inRange(template, (0, 0, 250), (5, 5, 255))
     contours_red, tree = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     x, y, w, h = cv2.boundingRect(contours_red[0])
-    font_size = h  # This is a simple estimation
+    font_size = h / len(text.split(' '))  # This is a simple estimation
     font = ImageFont.truetype(font_path, font_size)
     text_box = Image.new('RGB', (w, h), (255, 255, 255))
     draw = ImageDraw.Draw(text_box)
-    draw.text((0, 0), text, font=font, fill=(0, 0, 0))
+    bg_color = text_box[h//2, w//2]
+    text_color = (255, 255, 255) if sum(bg_color) < 383 else (0, 0, 0)
+    draw.text((0, 0), text, font=font, fill=text_color)
     text_box = text_box.resize((w, h), Image.ANTIALIAS)
     mask_red_copy = mask_red[y:y+h, x:x+w]
-    bg_color = text_box[h//2, w//2]
     for i in range(y, y+h):
         for j in range(x, x+w):
             if mask_red_copy[i-y, j-x] == 255:
                 template[i, j] = bg_color
     template[y:y+h, x:x+w] = text_box
     return template
+
+def generate_badge(data, photos, text_column, template_column, font_name):
+    for index, row in data.iterrows():
+        try:
+            template = cv2.imread(f'templates/{row[template_column].strip().lower()}.png')
+        except FileNotFoundError:
+            template = cv2.imread(f'templates/{row[template_column].strip().lower()}.jpg')
+        template = insert_photo(template, photos[index])
+        template = insert_text(template, row[text_column], f'fonts/{font_name}.ttf')
+        cv2.imwrite(f'badges/{index}.png', template)
