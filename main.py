@@ -87,18 +87,23 @@ def genBadgesOption():
     if not len(loader.template_column):
         notifyMissingInfo("template column")
         return
-    if not len(loader.font_name):
+    if not len(loader.font_filename):
         notifyMissingInfo("font file")
         return
     if not len(loader.images.keys()):
         submenu = menu.Menu(title="No images are loaded, proceed anyway?")
         submenu.set_options([('Yes, only text will be customized', genBadges), ('Go back', submenu.close)])
         submenu.open()
+    else:
+        genBadges()
 
 def genBadges():
     submenu = menu.Menu(title="Generating Badges...")
     submenu.open()
-    exit()
+    template.generate_badge(loader.data, loader.images, loader.text_column, loader.template_column, loader.font_filename)
+    submenu.set_title("Badges generated successfully!")
+    submenu.set_options([('Back', submenu.close)])
+    submenu.open()
 
 def exit():
     sys.exit()
