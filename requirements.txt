@@ -1,0 +1,5 @@
+Menu
+pandas
+opencv-python
+pillow
+openpyxl
