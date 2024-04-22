@@ -1,5 +1,6 @@
 import cv2
 from PIL import ImageFont, ImageDraw, Image
+import os
 
 def insert_photo(template, photo):
     mask_green = cv2.inRange(template, (0, 250, 0), (5, 255, 5))
@@ -34,6 +35,9 @@ def insert_text(template, text, font_path):
     return template
 
 def generate_badge(data, photos, text_column, template_column, font_name):
+    for file in os.listdir('output'):
+        if file != '.gitkeep':
+            os.remove(f'output/{file}')
     for index, row in data.iterrows():
         try:
             template = cv2.imread(f'templates/{row[template_column].strip().lower()}.png')
