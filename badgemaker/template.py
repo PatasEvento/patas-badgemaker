@@ -30,15 +30,31 @@ def fit_text_in_box(font, bounding_box, text):
 
 def insert_photo(template, photo):
     mask_green = cv2.inRange(template, (0, 180, 0), (100, 255, 100))
-    contours_green, tree = cv2.findContours(mask_green, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    x, y, w, h = cv2.boundingRect(contours_green[0])
-    photo = cv2.resize(photo, (w, h), interpolation=cv2.INTER_CUBIC)
-    mask_green_copy = mask_green[y:y+h, x:x+w]
-    for i in range(y, y+h):
-        for j in range(x, x+w):
-            if mask_green_copy[i-y, j-x] == 255:
-                template[i, j] = photo[i-y, j-x]
+    contours_green, _ = cv2.findContours(mask_green, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if not contours_green:
+        print('No green rectangle found in template. Skipping photo insertion.')
+        return template
+    green_contour = max(contours_green, key=cv2.contourArea)
+    x, y, w, h = cv2.boundingRect(green_contour)
+    height_ratio = h / photo.shape[0]
+    width_ratio = w / photo.shape[1]
+    scale = max(height_ratio, width_ratio)
+    new_width = int(photo.shape[1] * scale)
+    new_height = int(photo.shape[0] * scale)
+    photo_resized = cv2.resize(photo, (new_width, new_height), interpolation=cv2.INTER_CUBIC)
+    offset_x = x + (w - new_width) // 2
+    offset_y = y + (h - new_height) // 2
+    start_x = offset_x
+    start_y = offset_y
+    for i in range(new_height):
+        for j in range(new_width):
+            try:
+                if mask_green[start_y + i, start_x + j] == 255:
+                    template[start_y + i, start_x + j] = photo_resized[i, j]
+            except IndexError:
+                continue
     return template
+
 
 def insert_text(template, text, font_path):
     mask_red = cv2.inRange(template, (0, 0, 250), (5, 5, 255))
