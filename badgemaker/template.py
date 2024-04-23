@@ -7,6 +7,7 @@ def fit_text_in_box(font, bounding_box, text):
     best_font_size = 1
     best_num_lines = float('inf')
     best_text_lines = []
+    vertical_offset = 0
     for font_size in range(1, h):
         current_font = ImageFont.truetype(font, font_size)
         draw = ImageDraw.Draw(Image.new('RGB', (1, 1)))
@@ -22,11 +23,13 @@ def fit_text_in_box(font, bounding_box, text):
         if line:
             lines.append(line.strip())
         num_lines = len(lines)
-        if text_height * num_lines <= h and (num_lines < best_num_lines or (num_lines == best_num_lines and font_size > best_font_size)):
+        total_text_height = text_height * num_lines
+        if total_text_height <= h and (num_lines < best_num_lines or (num_lines == best_num_lines and font_size > best_font_size)):
             best_font_size = font_size
             best_num_lines = num_lines
             best_text_lines = lines
-    return best_font_size, best_text_lines
+            vertical_offset = (h - total_text_height) // 2
+    return best_font_size, best_text_lines, vertical_offset
 
 def insert_photo(template, photo):
     mask_green = cv2.inRange(template, (0, 180, 0), (100, 255, 100))
@@ -55,19 +58,18 @@ def insert_photo(template, photo):
                 continue
     return template
 
-
 def insert_text(template, text, font_path):
     mask_red = cv2.inRange(template, (0, 0, 250), (5, 5, 255))
     contours_red, tree = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     x, y, w, h = cv2.boundingRect(contours_red[0])
-    font_size, lines = fit_text_in_box(font_path, (x, y, w, h), text)
+    font_size, lines, vertical_offset = fit_text_in_box(font_path, (x, y, w, h), text)
     text = '\n'.join(lines)
     font = ImageFont.truetype(font_path, font_size)
     bg_color = tuple(template[y+h//2, x+w//2])
     text_color = (255, 255, 255) if sum(bg_color) < 383 else (0, 0, 0)
     text_box = Image.new('RGB', (w, h), bg_color)
     draw = ImageDraw.Draw(text_box)
-    draw.text((0, 0), text, font=font, fill=text_color)
+    draw.text((0, vertical_offset), text, font=font, fill=text_color)
     text_box = text_box.resize((w, h))
     template[y:y+h, x:x+w] = text_box
     return template
