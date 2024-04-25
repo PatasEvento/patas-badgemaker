@@ -100,7 +100,13 @@ def genBadgesOption():
 def genBadges():
     submenu = menu.Menu(title="Generating Badges...")
     submenu.open()
-    template.generate_badge(loader.data, loader.images, loader.text_column, loader.template_column, loader.font_filename)
+    try:
+        template.generate_badge(loader.data, loader.images, loader.text_column, loader.template_column, loader.font_filename)
+    except Exception as e:
+        submenu.set_title(f"An error occurred while generating badges: {e}")
+        submenu.set_options([('Back', submenu.close)])
+        submenu.open()
+        return
     submenu.set_title("Badges generated successfully!")
     submenu.set_options([('Back', submenu.close)])
     submenu.open()
