@@ -62,6 +62,7 @@ def insert_text(template, text, font_path):
     mask_red = cv2.inRange(template, (0, 0, 250), (5, 5, 255))
     contours_red, tree = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     x, y, w, h = cv2.boundingRect(contours_red[0])
+    text = text.replace('"', '').replace("'", '')
     font_size, lines, vertical_offset = fit_text_in_box(font_path, (x, y, w, h), text)
     text = '\n'.join(lines)
     font = ImageFont.truetype(font_path, font_size)
