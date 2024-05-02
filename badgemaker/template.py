@@ -32,7 +32,7 @@ def fit_text_in_box(font, bounding_box, text):
     return best_font_size, best_text_lines, vertical_offset
 
 def insert_photo(template, photo):
-    mask_green = cv2.inRange(template, (0, 150, 0), (110, 255, 110))
+    mask_green = cv2.inRange(template, (0, 120, 0), (110, 255, 110))
     contours_green, _ = cv2.findContours(mask_green, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if not contours_green:
         print('No green rectangle found in template. Skipping photo insertion.')
